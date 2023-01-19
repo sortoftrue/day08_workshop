@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -16,6 +18,7 @@ public class FileReaderMain {
     public static void main(String[] args) throws Exception{
         
         File file = new File("./data/data.txt");
+        //Path file = Paths.get("./data/data.txt");
 
         if(file.isFile()) System.out.println("file found!");
 
@@ -59,28 +62,43 @@ public class FileReaderMain {
                     break;
                 }
                 case "save":{
+                    if(employees.size()<1){
+                        System.out.println("List is empty!");
+                        break;
+                    }
                     System.out.println("proceeding to save");
                     employees.forEach(e->{
                         try {
                             writer.write(e.toString()+"\n");
-                            writer.flush();
+                            
                         } catch (IOException e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
                     });
+                    writer.flush();
                     employees.clear();
                     break;
                 }
                 case "read":{
                     reader = new BufferedReader(new FileReader(file));
+                    employees.clear();
                     while(reader.ready()){
                         Scanner readEmp = new Scanner(reader.readLine());
                         
-                        System.out.printf("Number: %-8s |Name: %-8s |Dept: %-10s |Role: %-10s |Email: %-10s |Salary: %-5s\n",readEmp.next(),readEmp.next(),readEmp.next(),readEmp.next(),readEmp.next(),readEmp.next());
-                        
-                    }
+                        Integer staffNo = Integer.parseInt(readEmp.next());
+                        String fullName = readEmp.next();
+                        String department = readEmp.next();
+                        String role = readEmp.next();
+                        String email=readEmp.next();
+                        Integer salary = Integer.parseInt(readEmp.next());
 
+                        System.out.printf("Number: %-8s |Name: %-8s |Dept: %-10s |Role: %-10s |Email: %-10s |Salary: %-5s\n",staffNo,fullName,department,role,email,salary);
+                        
+                        employees.add(new Employee(staffNo,fullName,department,role,salary));
+                    }
+                    reader.close();
+                    System.out.println(employees);
                     break;
                 }
                 case "exit":{
@@ -95,7 +113,7 @@ public class FileReaderMain {
 
         }
         
-        
+        writer.close();
 
     }
 
